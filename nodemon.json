@@ -1,0 +1,13 @@
+{
+  "restartable": "rs",
+  "watch": ["src"],
+  "ext": "js,ts,json",
+  "ignore": ["src/**/*.test.js", "src/**/*.spec.js", "src/**/*.test.ts", "src/**/*.spec.ts", "dist", "node_modules"],
+  "exec": "tsx --env-file=.env src/server.ts",
+  "delay": 500,
+  "signal": "SIGTERM",
+  "verbose": true,
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

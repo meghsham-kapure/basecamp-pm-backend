@@ -1,0 +1,7 @@
+msg=$(head -n 1 "$1")
+
+if ! printf '%s\n' "$msg" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?!?: .+'; then
+  echo "Error: invalid commit message."
+  echo "Format: type(scope): message"
+  exit 1
+fi

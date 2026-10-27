@@ -1,0 +1,7 @@
+if git diff --cached --name-only | grep -E '(^|/)\.env($|\.)' | grep -qvE '(^|/)\.env\.example$'; then
+  echo "Error: .env files must not be committed."
+  exit 1
+fi
+
+pnpm exec prettier --check .
+pnpm exec eslint .
