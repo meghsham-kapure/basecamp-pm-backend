@@ -1,9 +1,9 @@
 {
   "restartable": "rs",
   "watch": ["src"],
-  "ext": "js,ts,json",
-  "ignore": ["src/**/*.test.js", "src/**/*.spec.js", "src/**/*.test.ts", "src/**/*.spec.ts", "dist", "node_modules"],
-  "exec": "tsx --env-file=.env src/server.ts",
+  "ext": "js,json",
+  "ignore": ["src/**/*.test.js", "src/**/*.spec.js", "dist", "node_modules"],
+  "exec": "node --env-file=.env src/server.js",
   "delay": 500,
   "signal": "SIGTERM",
   "verbose": true,
