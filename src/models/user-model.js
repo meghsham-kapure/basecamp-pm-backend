@@ -1,8 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
-
-import bcrypt from "bcrypt";
 import crypto from "node:crypto";
+import bcrypt from "bcrypt";
 
 const userSchema = new Schema(
   {
@@ -45,6 +44,11 @@ const userSchema = new Schema(
       required: [true, "Password is required"],
     },
 
+    role: {
+      type: String,
+      required: [true, "Role is required"],
+    },
+
     isEmailVerified: {
       type: Boolean,
       required: [true, "Email verification status is required"],
@@ -63,6 +67,10 @@ const userSchema = new Schema(
       type: String,
     },
 
+    refreshTokenExpiry: {
+      type: Date,
+    },
+
     forgotPasswordToken: {
       type: String,
     },
@@ -76,11 +84,9 @@ const userSchema = new Schema(
   },
 );
 
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-
-  this.password = await bcrypt.hash(this.password, process.env.BCRYPT_HASH_ROUNDS);
-  next();
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  this.password = await bcrypt.hash(this.password, Number(process.env.BCRYPT_HASH_ROUNDS));
 });
 
 userSchema.methods.isPasswordCorrect = async function (password) {
@@ -110,10 +116,14 @@ userSchema.methods.createRefreshToken = function () {
 };
 
 userSchema.methods.createTempTokens = function () {
-  const unHashedToken = crypto.randomBytes(20).toString("hex");
+  const unHashedToken = crypto.randomBytes(16).toString("hex");
+  console.log(unHashedToken);
+
   const hashedToken = crypto.createHash("sha256").update(unHashedToken).digest("hex");
   const expiresIn = 1000 * 60 * 30; // (ms*sec*min)
   const tokenExpiry = Date.now() + expiresIn;
+
   return { unHashedToken, hashedToken, tokenExpiry };
 };
+
 export default mongoose.model("User", userSchema);

@@ -20,14 +20,18 @@ const sendEmail = async (options) => {
   const emailHtml = mailGenerator.generate(options.mailGeneratorContent);
 
   // Create a transporter using nodemailer with the Mailtrap SMTP configuration
-  const transporter = nodeMailer.createTransport({
+
+  const credentials = {
     host: process.env.MAILTRAP_SMTP_HOST,
     port: process.env.MAILTRAP_SMTP_PORT,
+    secure: false,
     auth: {
       user: process.env.MAILTRAP_SMTP_USER,
-      password: process.env.MAILTRAP_SMTP_PASSWORD,
+      pass: process.env.MAILTRAP_SMTP_PASS,
     },
-  });
+  };
+
+  const transporter = nodeMailer.createTransport(credentials);
 
   // Define the email options including sender, recipient, subject, and content
   const mail = {
@@ -47,7 +51,9 @@ const sendEmail = async (options) => {
   }
 };
 
-const emailVerificationMailgenContent = (userName, verificationUrl) => {
+const emailVerificationMailContent = (userName, verificationUrl) => {
+  console.log(`Email verification for ${userName} : ${verificationUrl}`);
+
   return {
     body: {
       name: userName,
@@ -65,7 +71,7 @@ const emailVerificationMailgenContent = (userName, verificationUrl) => {
   };
 };
 
-const forgotPasswordMailgenContent = (userName, passwordResetUrl) => {
+const forgotPasswordMailContent = (userName, passwordResetUrl) => {
   return {
     body: {
       name: userName,
@@ -83,4 +89,4 @@ const forgotPasswordMailgenContent = (userName, passwordResetUrl) => {
   };
 };
 
-export { emailVerificationMailgenContent, forgotPasswordMailgenContent, sendEmail };
+export { emailVerificationMailContent, forgotPasswordMailContent, sendEmail };
