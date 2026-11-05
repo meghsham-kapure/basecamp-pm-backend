@@ -17,7 +17,6 @@ authRouter
 
 authRouter.route("/verify/:userName/:verificationToken").post(
   (req, res, next) => {
-    console.log(req.params);
     next();
   },
   userVerifyValidator(),

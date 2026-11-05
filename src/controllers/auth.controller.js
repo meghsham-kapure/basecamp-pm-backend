@@ -31,9 +31,13 @@ export const verify = asyncHandler(async (req, res) => {
 });
 
 export const login = asyncHandler(async (req, res) => {
-  const { user, accessToken, refreshToken } = await authService.loginUser(
-    req.body,
-  );
+  const { userName, email, password } = req.validated;
+
+  const { user, accessToken, refreshToken } = await authService.loginUser({
+    userName,
+    email,
+    password,
+  });
 
   return res
     .status(200)
@@ -43,7 +47,14 @@ export const login = asyncHandler(async (req, res) => {
       new ApiSuccessResponse({
         status: 200,
         message: "User login successful!",
-        data: { user, accessToken, refreshToken },
+        data: {
+          user: {
+            id: user._id,
+            userName: user.userName,
+          },
+          accessToken,
+          refreshToken,
+        },
         req,
       }),
     );

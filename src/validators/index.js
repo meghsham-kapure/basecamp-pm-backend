@@ -63,11 +63,7 @@ export const userLoginValidator = () => {
     body().custom((_, { req }) => {
       const { email, userName } = req.body;
       if (!email === !userName) {
-        throw new Error(
-          VALIDATION_ERROR_MESSAGE.ONE_VALUE_ERROR + err
-            ? JSON.stringify(err, Object.getOwnPropertyNames(err))
-            : "NO ERROR OBJECT FOUND",
-        );
+        throw new Error("Invalid Input");
       }
       return true;
     }),

@@ -36,8 +36,6 @@ export const asyncHandler = (requestHandler) => {
         }
       }
 
-      console.log(responseData);
-
       return res.status(responseData.status).json(responseData);
     });
   };

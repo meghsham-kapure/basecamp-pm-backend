@@ -1,8 +1,5 @@
 import { User } from "../models/user.model.js";
 
-const PUBLIC_FIELDS =
-  "-password -isEmailVerified -emailVerificationToken -refreshToken -forgotPasswordToken -forgotPasswordExpiry";
-
 export const createUser = (data) => User.create(data);
 
 export const saveUser = ({ user, validateBeforeSave = true }) =>
@@ -16,5 +13,4 @@ export const findByUserNameOrEmail = ({ userName, email }) => {
   return User.findOne({ $or: conditions });
 };
 
-export const findPublicUserById = (id) =>
-  User.findById(id).select(PUBLIC_FIELDS);
+export const findPublicUserById = (id) => User.findById(id);

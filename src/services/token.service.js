@@ -9,8 +9,6 @@ export const verifyToken = (token, type) => {
       ? process.env.REFRESH_TOKEN_SECRET
       : process.env.ACCESS_TOKEN_SECRET;
 
-  console.log(`verifying ${type} token`);
-
   try {
     const payload = jwt.verify(token, secret, {
       algorithms: ["HS256"],

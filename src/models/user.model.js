@@ -134,11 +134,8 @@ userSchema.methods.verifyToken = function (verificationToken) {
   const isNotExpired = this.emailVerificationExpiry >= Date.now();
   const isMatching = this.emailVerificationToken === hashedVerificationToken;
 
-  console.log(`${isNotExpired && isMatching ? "is" : "not"} verified`);
-
   return isNotExpired && isMatching;
 };
 
 const User = mongoose.model("User", userSchema);
-
 export { User };

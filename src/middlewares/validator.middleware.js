@@ -19,7 +19,7 @@ const validate = asyncHandler(async (req, res, next) => {
     throw new ApiErrorResponse({
       status: 400,
       name: "Validation Error",
-      message: extractedErrors + ".",
+      message: extractedErrors ? extractedErrors : "",
     });
   }
 });

@@ -1,6 +1,4 @@
 export const emailVerificationMailContent = (userName, verificationUrl) => {
-  console.log(`Email verification for ${userName} : ${verificationUrl}`);
-
   return {
     body: {
       name: userName,

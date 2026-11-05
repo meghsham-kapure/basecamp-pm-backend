@@ -3,16 +3,6 @@ import { ApiErrorResponse } from "../utils/api-error-response.js";
 import { emailVerificationMailContent } from "../templates/mail.template.js";
 import { sendEmail } from "./mail.service.js";
 
-export const createTokens = async (user) => {
-  const accessToken = user.createAccessToken();
-  const refreshToken = user.createRefreshToken();
-
-  user.refreshToken = refreshToken;
-  await authRepository.saveUser({ user: user, validateBeforeSave: false });
-
-  return { accessToken, refreshToken };
-};
-
 export const registerUser = async ({
   userName,
   fullName,
@@ -129,7 +119,16 @@ export const loginUser = async ({ userName, email, password }) => {
   }
 
   const user = await authRepository.findByUserNameOrEmail({ userName, email });
-  const isPasswordCorrect = user && (await user.isPasswordCorrect(password));
+
+  if (!user) {
+    throw new ApiErrorResponse({
+      status: 401,
+      name: "Unauthorized",
+      message: "Invalid credentials",
+    });
+  }
+
+  const isPasswordCorrect = await user.isPasswordCorrect(password);
 
   if (!isPasswordCorrect) {
     throw new ApiErrorResponse({
@@ -139,8 +138,11 @@ export const loginUser = async ({ userName, email, password }) => {
     });
   }
 
-  const { accessToken, refreshToken } = await createTokens(user);
-  const loggedInUser = await authRepository.findPublicUserById(user._id);
+  const refreshToken = user.createRefreshToken();
+  user.refreshToken = refreshToken;
+  await authRepository.saveUser({ user: user, validateBeforeSave: false });
 
-  return { user: loggedInUser, accessToken, refreshToken };
+  const accessToken = user.createAccessToken();
+
+  return { user, accessToken, refreshToken };
 };
