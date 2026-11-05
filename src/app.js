@@ -8,7 +8,7 @@ import pinoHttp from "pino-http";
 import { errorHandler } from "./middlewares/error-handler.middleware.js";
 import { notFound } from "./middlewares/not-found.middleware.js";
 import { apiLimiter } from "./middlewares/rate-limit.middleware.js";
-import { traceRequest } from "./middlewares/request-trace.js";
+import { traceRequest } from "./middlewares/request-trace.middleware.js";
 import { rootRouter } from "./routes/root.route.js";
 import { logger } from "./utils/logger.js";
 import { isProd } from "./utils/environment-check.js";
