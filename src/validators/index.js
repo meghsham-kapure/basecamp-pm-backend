@@ -1,5 +1,6 @@
-import { body } from "express-validator";
+import { body, param, cookie, header } from "express-validator";
 import { ROLE_VALUES } from "../constants/role.constant.js";
+import { VALIDATION_ERROR_MESSAGE } from "../constants/error-message.constant.js";
 
 export const userRegisterValidator = () => {
   return [
@@ -7,45 +8,53 @@ export const userRegisterValidator = () => {
       .optional()
       .default("avatar-1")
       .isIn(["avatar-1", "avatar-2", "avatar-3", "avatar-4", "avatar-5"])
-      .withMessage("Invalid avatar name, choose from enumerated values"),
+      .withMessage(VALIDATION_ERROR_MESSAGE.AVATAR_VALUE_ERROR),
 
     body("fullName")
       .trim()
       .isLength({ min: 4, max: 64 })
-      .withMessage(
-        "Invalid full name, full name length should be in 4-64 character",
-      ),
+      .withMessage(VALIDATION_ERROR_MESSAGE.FULL_NAME_LENGTH_ERROR),
 
     body("email")
       .trim()
       .notEmpty()
-      .withMessage("Invalid email, email is required")
+      .withMessage(VALIDATION_ERROR_MESSAGE.EMAIL_REQUIRED)
       .isEmail()
-      .withMessage("Invalid email, email format is not correct"),
+      .withMessage(VALIDATION_ERROR_MESSAGE.EMAIL_FORMAT_ERROR),
 
     body("userName")
       .trim()
       .toLowerCase()
       .notEmpty()
-      .withMessage("Invalid username, username is required")
+      .withMessage(VALIDATION_ERROR_MESSAGE.USER_NAME_ERROR)
       .isLength({ min: 4, max: 32 })
-      .withMessage(
-        "Invalid username, username length should be in 4-32 character",
-      ),
+      .withMessage(VALIDATION_ERROR_MESSAGE.USER_NAME_LENGTH_ERROR),
 
     body("password")
       .notEmpty()
-      .withMessage("Invalid password, password is required")
+      .withMessage(VALIDATION_ERROR_MESSAGE.PASSWORD_ERROR)
       .isLength({ min: 4, max: 32 })
-      .withMessage(
-        "Invalid password, password length should be in 4-32 character",
-      ),
+      .withMessage(VALIDATION_ERROR_MESSAGE.PASSWORD_LENGTH_ERROR),
 
     body("role")
       .optional()
       .isIn(["User", "SuperUser", "Admin", "SuperAdmin", "DON"])
-      .withMessage("Invalid role, role should be one of the enumerated values")
+      .withMessage(VALIDATION_ERROR_MESSAGE.ROLE_UNDEFINED_ERROR)
       .default("User"),
+  ];
+};
+
+export const userVerifyValidator = () => {
+  return [
+    param("email")
+      .optional()
+      .trim()
+      .isEmail()
+      .withMessage(VALIDATION_ERROR_MESSAGE.EMAIL_FORMAT_ERROR),
+
+    param("verificationToken")
+      .isLength({ min: 32, max: 32 })
+      .withMessage(VALIDATION_ERROR_MESSAGE.TOKEN_FORMAT_ERROR),
   ];
 };
 
@@ -55,7 +64,7 @@ export const userLoginValidator = () => {
       const { email, userName } = req.body;
       if (!email === !userName) {
         throw new Error(
-          "Send either email or username, not both" + err
+          VALIDATION_ERROR_MESSAGE.ONE_VALUE_ERROR + err
             ? JSON.stringify(err, Object.getOwnPropertyNames(err))
             : "NO ERROR OBJECT FOUND",
         );
@@ -67,21 +76,24 @@ export const userLoginValidator = () => {
       .optional()
       .trim()
       .isEmail()
-      .withMessage("email format invalid"),
+      .withMessage(VALIDATION_ERROR_MESSAGE.EMAIL_FORMAT_ERROR),
 
     body("userName")
       .optional()
       .trim()
       .toLowerCase()
       .isLength({ min: 3, max: 30 })
-      .withMessage("Username length should be in 3 -30 character"),
+      .withMessage(VALIDATION_ERROR_MESSAGE.USER_NAME_LENGTH_ERROR),
 
     body("password")
       .notEmpty()
-      .withMessage("password is required")
+      .withMessage(VALIDATION_ERROR_MESSAGE.PASSWORD_ERROR)
       .isLength({ min: 3, max: 30 })
-      .withMessage("Password length should be in 3 -30 character"),
+      .withMessage(VALIDATION_ERROR_MESSAGE.PASSWORD_LENGTH_ERROR),
 
-    body("role").optional().isIn(ROLE_VALUES).withMessage("Invalid role"),
+    body("role")
+      .optional()
+      .isIn(ROLE_VALUES)
+      .withMessage(VALIDATION_ERROR_MESSAGE.ROLE_UNDEFINED_ERROR),
   ];
 };
