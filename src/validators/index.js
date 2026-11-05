@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { ROLE_VALUES } from "../constants/role.constant.js";
 
 export const userRegisterValidator = () => {
   return [
@@ -81,6 +82,6 @@ export const userLoginValidator = () => {
       .isLength({ min: 3, max: 30 })
       .withMessage("Password length should be in 3 -30 character"),
 
-    body("role").optional().default("user"),
+    body("role").optional().isIn(ROLE_VALUES).withMessage("Invalid role"),
   ];
 };

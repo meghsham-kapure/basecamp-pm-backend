@@ -1,12 +1,9 @@
+import bcrypt from "bcrypt";
 import mongoose, { Schema } from "mongoose";
 import crypto from "node:crypto";
-import bcrypt from "bcrypt";
 
-import {
-  signToken,
-  verifyToken,
-  decodeToken,
-} from "../utils/json-web-token.js";
+import { ROLE_VALUES, ROLES } from "../constants/role.constant.js";
+import { signToken } from "../services/token.service.js";
 
 const userSchema = new Schema(
   {
@@ -26,6 +23,7 @@ const userSchema = new Schema(
     userName: {
       type: String,
       required: [true, "Username is required"],
+      unique: true,
       index: true,
       trim: true,
       lowercase: true,
@@ -51,7 +49,11 @@ const userSchema = new Schema(
     role: {
       type: String,
       required: [true, "Role is required"],
-      default: "User",
+      enum: {
+        values: ROLE_VALUES,
+        message: "{VALUE} is not a valid role",
+      },
+      default: ROLES.MEMBER,
     },
 
     isEmailVerified: {
@@ -111,7 +113,6 @@ userSchema.methods.createRefreshToken = function () {
 
 userSchema.methods.createTempTokens = function () {
   const unHashedToken = crypto.randomBytes(16).toString("hex");
-  console.log(unHashedToken);
 
   const hashedToken = crypto
     .createHash("sha256")
