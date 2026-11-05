@@ -1,6 +1,7 @@
 import * as authRepository from "../repositories/auth.repository.js";
 import { ApiErrorResponse } from "../utils/api-error-response.js";
-import { emailVerificationMailContent, sendEmail } from "../utils/mail.js";
+import { emailVerificationMailContent } from "../templates/mail.template.js";
+import { sendEmail } from "./mail.service.js";
 
 export const createTokens = async (user) => {
   const accessToken = user.createAccessToken();
