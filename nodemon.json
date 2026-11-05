@@ -1,13 +1,16 @@
 {
   "restartable": "rs",
-  "watch": ["src"],
+  "watch": ["src", ".env"],
   "ext": "js,json",
   "ignore": ["src/**/*.test.js", "src/**/*.spec.js", "dist", "node_modules"],
-  "exec": "node --env-file=.env src/server.js",
+  "exec": "node --disable-warning=DEP0040 --env-file=.env src/server.js",
   "delay": 500,
   "signal": "SIGTERM",
-  "verbose": true,
+  "verbose": false,
   "env": {
     "NODE_ENV": "development"
+  },
+  "events": {
+    "restart": "clear"
   }
 }

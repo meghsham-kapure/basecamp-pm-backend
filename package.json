@@ -5,7 +5,7 @@
   "main": "scr/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon",
+    "dev": "clear && nodemon --quiet",
     "build": "echo 'No build step required for JavaScript'",
     "prepare": "husky"
   },
@@ -15,30 +15,42 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "^11.15.0",
+      "version": "^12.16.1",
       "onFail": "download"
     }
   },
   "type": "module",
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/node": "^26.6.5",
-    "eslint": "^10.13.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mailgen": "^2.0.7",
+    "@types/node": "^26.6.6",
+    "@types/nodemailer": "^8.0.2",
+    "eslint": "^10.14.0",
     "eslint-plugin-unicorn": "^79.0.0",
     "husky": "^9.1.7",
     "nodemon": "^3.1.14",
+    "pino-pretty": "^13.2.0",
     "prettier": "^3.9.10"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "compression": "^1.8.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^18.0.9",
     "express": "^5.3.0",
+    "express-rate-limit": "^8.7.3",
     "express-validator": "^7.3.2",
+    "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "mailgen": "^2.0.36",
     "mongoose": "^9.11.4",
-    "nodemailer": "^10.2.1"
+    "nodemailer": "^10.3.1",
+    "pino": "^10.4.0",
+    "pino-http": "^11.0.0"
   }
 }
