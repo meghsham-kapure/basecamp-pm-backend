@@ -4,6 +4,7 @@ import {
   cookieOptions,
 } from "../constants/cookie.constant.js";
 import * as authService from "../services/auth.service.js";
+import { ApiErrorResponse } from "../utils/api-error-response.js";
 import { ApiSuccessResponse } from "../utils/api-success-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
 
@@ -21,6 +22,12 @@ export const registerUser = asyncHandler(async (req, res) => {
       req,
     }),
   );
+});
+
+export const verify = asyncHandler(async (req, res) => {
+  const { userName, verificationToken } = req.validated;
+  await authService.verifyUser({ userName, verificationToken });
+  return res.status(204).send();
 });
 
 export const login = asyncHandler(async (req, res) => {

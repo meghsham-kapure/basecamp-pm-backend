@@ -8,7 +8,7 @@ export const createTokens = async (user) => {
   const refreshToken = user.createRefreshToken();
 
   user.refreshToken = refreshToken;
-  await authRepository.saveUser(user);
+  await authRepository.saveUser({ user: user, validateBeforeSave: false });
 
   return { accessToken, refreshToken };
 };
@@ -48,9 +48,9 @@ export const registerUser = async ({
 
   newUser.emailVerificationToken = hashedToken;
   newUser.emailVerificationExpiry = tokenExpiry;
-  await authRepository.saveUser(newUser);
+  await authRepository.saveUser({ user: newUser, validateBeforeSave: false });
 
-  const verificationLink = `${baseUrl}/api/v1/auth/verify-email/${unHashedToken}`;
+  const verificationLink = `${baseUrl}/api/v1/auth/verify/${newUser.userName}/${unHashedToken}`;
 
   await sendEmail({
     to: newUser.email,
@@ -70,6 +70,45 @@ export const registerUser = async ({
     role: newUser.role,
     emailVerificationExpiry: newUser.emailVerificationExpiry,
   };
+};
+
+export const verifyUser = async ({ userName, verificationToken }) => {
+  const existingUser = await authRepository.findByUserNameOrEmail({
+    userName,
+  });
+
+  if (!existingUser) {
+    throw new ApiErrorResponse({
+      status: 404,
+      name: "Resource Not Found",
+      message: "User does not exists",
+    });
+  }
+
+  if (existingUser.isEmailVerified) {
+    throw new ApiErrorResponse({
+      status: 422,
+      name: "Resource unmodifiable",
+      message: "User email already verified ",
+    });
+  }
+  const result = existingUser.verifyToken(verificationToken);
+
+  if (result) {
+    existingUser.isEmailVerified = true;
+    return await authRepository.saveUser({
+      user: existingUser,
+      validateBeforeSave: false,
+    });
+  } else {
+    if (!existingUser) {
+      throw new ApiErrorResponse({
+        status: 404,
+        name: "Resource Not Found",
+        message: "User does not exists",
+      });
+    }
+  }
 };
 
 export const loginUser = async ({ userName, email, password }) => {

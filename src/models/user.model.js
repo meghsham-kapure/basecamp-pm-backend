@@ -125,6 +125,20 @@ userSchema.methods.createTempTokens = function () {
   return { unHashedToken, hashedToken, tokenExpiry };
 };
 
+userSchema.methods.verifyToken = function (verificationToken) {
+  const hashedVerificationToken = crypto
+    .createHash("sha256")
+    .update(verificationToken)
+    .digest("hex");
+
+  const isNotExpired = this.emailVerificationExpiry >= Date.now();
+  const isMatching = this.emailVerificationToken === hashedVerificationToken;
+
+  console.log(`${isNotExpired && isMatching ? "is" : "not"} verified`);
+
+  return isNotExpired && isMatching;
+};
+
 const User = mongoose.model("User", userSchema);
 
 export { User };
