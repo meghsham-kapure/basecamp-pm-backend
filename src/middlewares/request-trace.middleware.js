@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-export const startTrace = (req, res, next) => {
+export const traceRequest = (req, res, next) => {
   const traceData = {
     route: `${req.method} ${req.originalUrl}`,
     id: randomUUID(),
