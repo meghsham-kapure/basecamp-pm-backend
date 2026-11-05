@@ -1,17 +1,44 @@
-const asyncHandler = (requestHandler) => {
+import { ApiErrorResponse } from "./api-error-response.js";
+
+export const asyncHandler = (requestHandler) => {
   return (req, res, next) => {
     Promise.resolve(requestHandler(req, res, next)).catch((err) => {
-      console.error("========== ERROR ==========");
-      console.error(`Name:    ${err.name}`);
-      console.error(`Message: ${err.message}`);
-      console.error(`Route:   ${req.method} ${req.originalUrl}`);
-      console.error(`Time:    ${new Date().toISOString()}`);
-      if (err.statusCode) console.error(`Status:  ${err.statusCode}`);
-      if (err.cause) console.error("Cause:  ", err.cause);
-      console.error(`Stack:\n${err.stack}`);
-      next(err);
+      console.error("Error :", err);
+      let responseData;
+      if (err instanceof ApiErrorResponse) {
+        responseData = {
+          isSuccessful: err.isSuccessful,
+          status: err.status,
+          name: err.name,
+          message: err.message,
+          stack: err.stack,
+        };
+
+        if (String(process.env.NODE_ENV).toUpperCase().startsWith("DEV")) {
+          responseData = {
+            ...responseData,
+            stack: err?.stack,
+          };
+        }
+      } else {
+        responseData = {
+          isSuccessful: false,
+          status: 500,
+          name: "Unknown-App-Error",
+          message: "Something went wrong!",
+        };
+
+        if (String(process.env.NODE_ENV).toUpperCase().startsWith("DEV")) {
+          responseData = {
+            ...responseData,
+            stack: err?.stack,
+          };
+        }
+      }
+
+      console.log(responseData);
+
+      return res.status(responseData.status).json(responseData);
     });
   };
 };
-
-export { asyncHandler };

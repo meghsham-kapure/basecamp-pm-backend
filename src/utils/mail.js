@@ -1,9 +1,8 @@
 import Mailgen from "mailgen";
-import { Verify } from "node:crypto";
 
 import nodeMailer from "nodemailer";
 
-const sendEmail = async (options) => {
+export const sendEmail = async (options) => {
   // Create a new instance of Mailgen with the desired theme and product information
   const mailGenerator = new Mailgen({
     theme: "default",
@@ -14,7 +13,9 @@ const sendEmail = async (options) => {
   });
 
   // Generate the email content using Mailgen
-  const emailTextual = mailGenerator.generatePlaintext(options.mailGeneratorContent);
+  const emailTextual = mailGenerator.generatePlaintext(
+    options.mailGeneratorContent,
+  );
 
   // Generate the HTML version of the email content using Mailgen
   const emailHtml = mailGenerator.generate(options.mailGeneratorContent);
@@ -45,33 +46,38 @@ const sendEmail = async (options) => {
   // Send the email using the transporter and handle any errors that may occur
   try {
     await transporter.sendMail(mail);
-  } catch (error) {
-    console.error("Error sending email:", error);
-    // throw new Error("Failed to send email");
+  } catch (err) {
+    console.error(
+      "Error sending email:",
+      +err
+        ? JSON.stringify(err, Object.getOwnPropertyNames(err))
+        : "NO ERROR OBJECT FOUND",
+    );
   }
 };
 
-const emailVerificationMailContent = (userName, verificationUrl) => {
+export const emailVerificationMailContent = (userName, verificationUrl) => {
   console.log(`Email verification for ${userName} : ${verificationUrl}`);
 
   return {
     body: {
       name: userName,
-      intro: "Welcome to out App! We'are excited to have you on board! ",
+      intro: "Welcome to our App! We're excited to have you on board!",
       action: {
-        instruction: "To verify your email please click on the following button.",
+        instructions: `To verify your email, open this link: ${verificationUrl} or click the button below.`,
         button: {
           color: "#22BC66",
           text: "Verify Email",
           link: verificationUrl,
         },
       },
-      outro: "Need help or have question? Just reply to this email, we'd love to help.",
+      outro:
+        "Need help or have questions? Just reply to this email, we'd love to help.",
     },
   };
 };
 
-const forgotPasswordMailContent = (userName, passwordResetUrl) => {
+export const forgotPasswordMailContent = (userName, passwordResetUrl) => {
   return {
     body: {
       name: userName,
@@ -84,9 +90,8 @@ const forgotPasswordMailContent = (userName, passwordResetUrl) => {
           link: passwordResetUrl,
         },
       },
-      outro: "Need help or have question? Just reply to this email, we'd love to help.",
+      outro:
+        "Need help or have question? Just reply to this email, we'd love to help.",
     },
   };
 };
-
-export { emailVerificationMailContent, forgotPasswordMailContent, sendEmail };
